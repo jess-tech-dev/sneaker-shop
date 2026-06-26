@@ -18,3 +18,10 @@ module.exports = async (req, res) => {
 
     return res.status(200).json({ url: testUrl });
 };
+
+// api/checkout.js
+
+const MAXICASH_MERCHANT_ID = "votre_merchant_id_reel"; // Remplacez par votre ID réel
+const MAXICASH_PASSWORD = "votre_password_reel"; // Remplacez par votre mot de passe réel
+
+// ... reste du code ...
