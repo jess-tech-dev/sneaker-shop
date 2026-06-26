@@ -1,23 +1,41 @@
-#A modern sneaker e-commerce website built in 2023 using Node.js, featuring a simple product catalog, Serverless Functions, and MaxiCash payment integration.
-Features
-Display of sneaker products
-Product details page
-Shopping cart functionality
-MaxiCash payment integration
-Serverless backend architecture
-Responsive design for mobile and desktop
-Fast and lightweight user experience
-Tech Stack
-Node.js
-HTML5
-CSS3
-JavaScript
-Serverless Functions
-MaxiCash Payment Gateway
-Products
-Currently includes two sneaker models:
-Air Jordan
-Nike Air Max
-Project Goal
-This project was created to explore modern e-commerce development concepts, including online payments, serverless computing, and responsive web design. sneaker-shop
-A responsive sneaker e-commerce website featuring product catalogs, categories, shopping cart functionality, and a modern user experience.
+# 👟 Sneakers Shop
+
+Une boutique en ligne de sneakers développée en **2023** avec **Node.js**, intégrant des **fonctions serverless** et le système de paiement **MaxiCash**. Ce projet présente une interface simple permettant de consulter des produits, les ajouter au panier et effectuer un paiement en ligne.
+
+## Fonctionnalités
+
+- Affichage des produits
+- Consultation des détails des sneakers
+- Gestion du panier d'achat
+- Intégration du paiement MaxiCash
+- Architecture serverless
+- Interface responsive (mobile et ordinateur)
+- Navigation simple et rapide
+
+## Technologies utilisées
+
+- Node.js
+- HTML5
+- CSS3
+- JavaScript
+- Fonctions Serverless
+- MaxiCash API
+
+## Produits disponibles
+
+Le projet contient actuellement deux modèles de sneakers :
+
+- Air Jordan
+- Nike Air Max
+
+## Objectif du projet
+
+Ce projet a été réalisé afin d'explorer les concepts du commerce électronique moderne, notamment l'intégration des paiements en ligne, l'utilisation des fonctions serverless et le développement d'interfaces web responsives.
+
+## Installation
+
+```bash
+git clone https://github.com/votre-utilisateur/sneakers-shop.git
+cd sneakers-shop
+npm install
+npm start
