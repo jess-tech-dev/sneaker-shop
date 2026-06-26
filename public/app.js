@@ -161,3 +161,15 @@ async function processCheckout() {
 
 // Lier le bouton de la navbar à l'ouverture du panier
 document.getElementById('cart-btn').addEventListener('click', toggleCart);
+// public/app.js
+
+if (result.status === "success" || result.payurl) {
+    window.location.href = result.url;
+} else {
+    // Afficher un message d'erreur à l'utilisateur
+    alert("Une erreur est survenue lors du paiement. Veuillez réessayer.");
+}
+
+// ... reste du code ...
+
+
