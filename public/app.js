@@ -1,175 +1,111 @@
-// Données des produits (Modèles 2023)
-const products = {
-    nike: {
-        id: "nike-air-2023",
-        name: "Air Max Classic 23",
-        price: 85.00,
-        brand: "Nike"
-    },
-    adidas: {
-        id: "adidas-forum-2023",
-        name: "Forum Low Street",
-        price: 75.00,
-        brand: "Adidas"
-    }
-};
+// Initialisation du panier depuis le stockage local
+let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
-// État initial du panier
-let cart = {};
+// Charger l'état graphique initial au démarrage
+updateCartUI();
 
-// Fonction pour ouvrir/fermer la sidebar du panier
-function toggleCart() {
+function toggleCart(open) {
     const sidebar = document.getElementById('cart-sidebar');
-    sidebar.classList.toggle('hidden');
-}
-
-// Ajouter un produit au panier
-function addToCart(productId) {
-    const product = products[productId];
-    if (!product) return;
-
-    if (cart[productId]) {
-        cart[productId].quantity += 1;
+    if (open) {
+        sidebar.classList.remove('hidden');
     } else {
-        cart[productId] = {
-            ...product,
-            quantity: 1
-        };
-    }
-
-    updateUI();
-    // Optionnel : Ouvrir le panier automatiquement à l'ajout
-    const sidebar = document.getElementById('cart-sidebar');
-    if (sidebar.classList.contains('hidden')) {
-        toggleCart();
+        sidebar.classList.add('hidden');
     }
 }
 
-// Supprimer ou réduire la quantité d'un produit
-function removeFromCart(productId) {
-    if (cart[productId]) {
-        cart[productId].quantity -= 1;
-        if (cart[productId].quantity <= 0) {
-            delete cart[productId];
-        }
+function addToCart(id, name, price) {
+    if (cart[id]) {
+        cart[id].quantity += 1;
+    } else {
+        cart[id] = { name: name, price: price, quantity: 1 };
     }
-    updateUI();
+    saveCart();
+    updateCartUI();
+    toggleCart(true); // Ouvre automatiquement le panier à l'ajout
 }
 
-// Mettre à jour l'interface utilisateur
-function updateUI() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartCount = document.getElementById('cart-count');
-    const cartTotal = document.getElementById('cart-total');
-    
-    // Vider le conteneur du panier
-    cartItemsContainer.innerHTML = '';
-    
-    let totalItems = 0;
-    let totalPrice = 0;
-    const cartKeys = Object.keys(cart);
-
-    if (cartKeys.length === 0) {
-        cartItemsContainer.innerHTML = `<p class="text-gray-500 text-center py-8">Votre panier est vide.</p>`;
-        cartCount.classList.add('hidden');
-        cartTotal.innerText = "0.00 $";
-        return;
+function updateQuantity(id, change) {
+    if (!cart[id]) return;
+    cart[id].quantity += change;
+    if (cart[id].quantity <= 0) {
+        delete cart[id];
     }
+    saveCart();
+    updateCartUI();
+}
 
-    // Générer le HTML pour chaque produit dans le panier
-    cartKeys.forEach(key => {
-        const item = cart[key];
-        totalItems += item.quantity;
-        totalPrice += item.price * item.quantity;
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
 
-        const itemHTML = `
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
-                <div class="flex-1">
-                    <span class="text-xs font-bold text-gray-400 uppercase">${item.brand}</span>
-                    <h4 class="font-bold text-gray-900 text-sm">${item.name}</h4>
-                    <p class="text-emerald-600 font-bold text-sm mt-0.5">${item.price.toFixed(2)} $</p>
-                </div>
-                <div class="flex items-center space-x-2 bg-white rounded-lg border p-1 shadow-sm">
-                    <button onclick="removeFromCart('${key}')" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-red-500 transition">
-                        <i class="fas fa-minus text-xs"></i>
-                    </button>
-                    <span class="font-bold text-sm w-4 text-center text-gray-800">${item.quantity}</span>
-                    <button onclick="addToCart('${key}')" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-emerald-500 transition">
-                        <i class="fas fa-plus text-xs"></i>
-                    </button>
-                </div>
+function updateCartUI() {
+    const container = document.getElementById('cart-items-container');
+    const badge = document.getElementById('cart-badge');
+    const totalElement = document.getElementById('cart-total');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    let total = 0;
+    let itemCount = 0;
+    
+    const keys = Object.keys(cart);
+    
+    if (keys.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-12 text-gray-400">
+                <i class="fa-solid fa-basket-shopping text-4xl mb-3 block"></i>
+                <p class="text-sm">Votre panier est vide</p>
             </div>
         `;
-        cartItemsContainer.innerHTML += itemHTML;
-    });
-
-    // Mettre à jour le badge du compteur
-    cartCount.innerText = totalItems;
-    cartCount.classList.remove('hidden');
-
-    // Mettre à jour le prix total affiché
-    cartTotal.innerText = `${totalPrice.toFixed(2)} $`;
+    } else {
+        keys.forEach(id => {
+            const item = cart[id];
+            total += item.price * item.quantity;
+            itemCount += item.quantity;
+            
+            container.innerHTML += `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-900">${item.name}</h4>
+                        <p class="text-xs text-emerald-600 font-semibold">${item.price.toFixed(2)} $</p>
+                    </div>
+                    <div class="flex items-center space-x-2.5 bg-white border rounded-lg p-1 shadow-sm">
+                        <button onclick="updateQuantity('${id}', -1)" class="w-6 h-6 text-xs bg-gray-100 rounded hover:bg-gray-200 font-bold">-</button>
+                        <span class="text-sm font-bold w-4 text-center">${item.quantity}</span>
+                        <button onclick="updateQuantity('${id}', 1)" class="w-6 h-6 text-xs bg-gray-100 rounded hover:bg-gray-200 font-bold">+</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Mettre à jour le badge et les totaux
+    totalElement.innerText = `${total.toFixed(2)} $`;
+    if (itemCount > 0) {
+        badge.innerText = itemCount;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
 }
 
-// Lancer le tunnel d'achat (Connexion avec le Backend)
-async function processCheckout() {
+function processCheckout() {
     const cartKeys = Object.keys(cart);
     if (cartKeys.length === 0) {
         alert("Votre panier est vide !");
         return;
     }
 
+    // Récupérer le mode sélectionné dans la liste radio
+    const selectedMethod = document.querySelector('input[name="payment-method"]:checked').value;
     const checkoutBtn = document.getElementById('checkout-btn');
+    
     checkoutBtn.disabled = true;
-    checkoutBtn.innerText = "Génération du paiement...";
+    checkoutBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Traitement de ${selectedMethod}...`;
 
-    try {
-        // Préparation des données à envoyer à notre fonction serverless
-        const orderData = {
-            items: Object.values(cart).map(item => ({
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity
-            }))
-        };
-
-        // Appel de la future fonction serverless Node.js
-        const response = await fetch('/api/checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.url) {
-            // Redirection vers la page de paiement sécurisée MaxiCash
-            window.location.href = result.url;
-        } else {
-            throw new Error(result.message || "Erreur lors de l'initialisation du paiement.");
-        }
-
-    } catch (error) {
-        alert(`Erreur: ${error.message}`);
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerText = "Payer avec MaxiCash";
-    }
+    // Petit délai de traitement fictif de 1.2s, puis redirection directe
+    setTimeout(() => {
+        window.location.href = `success.html?method=${encodeURIComponent(selectedMethod)}`;
+    }, 1200);
 }
-
-// Lier le bouton de la navbar à l'ouverture du panier
-document.getElementById('cart-btn').addEventListener('click', toggleCart);
-// public/app.js
-
-if (result.status === "success" || result.payurl) {
-    window.location.href = result.url;
-} else {
-    // Afficher un message d'erreur à l'utilisateur
-    alert("Une erreur est survenue lors du paiement. Veuillez réessayer.");
-}
-
-// ... reste du code ...
-
-
