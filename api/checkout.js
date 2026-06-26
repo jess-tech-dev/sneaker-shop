@@ -25,3 +25,24 @@ const MAXICASH_MERCHANT_ID = "votre_merchant_id_reel"; // Remplacez par votre ID
 const MAXICASH_PASSWORD = "votre_password_reel"; // Remplacez par votre mot de passe réel
 
 // ... reste du code ...
+
+// api/checkout.js
+
+try {
+    // ... code d'envoi à MaxiCash ...
+    
+    if (result.status === "success" || result.payurl) {
+        return res.status(200).json({ url: result.payurl });
+    } else {
+        // Gérer l'erreur spécifique renvoyée par MaxiCash
+        return res.status(500).json({ 
+            message: "Échec de l'initialisation chez MaxiCash", 
+            details: result.message 
+        });
+    }
+} catch (error) {
+    // Gérer l'erreur interne du serveur
+    return res.status(500).json({ message: "Erreur interne", error: error.message });
+}
+
+// ... reste du code ...
