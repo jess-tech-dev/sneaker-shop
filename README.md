@@ -32,10 +32,4 @@ Le projet contient actuellement deux modèles de sneakers :
 
 Ce projet a été réalisé afin d'explorer les concepts du commerce électronique moderne, notamment l'intégration des paiements en ligne, l'utilisation des fonctions serverless et le développement d'interfaces web responsives.
 
-## Installation
 
-```bash
-git clone https://github.com/votre-utilisateur/sneakers-shop.git
-cd sneakers-shop
-npm install
-npm start
